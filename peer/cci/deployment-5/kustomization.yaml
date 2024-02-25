@@ -1,0 +1,12 @@
+resources:
+- deployment.yaml
+# use pre created persistent volume
+#- pvc.yaml
+- service.yaml
+commonLabels:
+  owner: tommylike
+commonAnnotations:
+  email: tommylikehu@gmail.com
+apiVersion: kustomize.config.k8s.io/v1beta1
+namespace: dragonfly-cache
+kind: Kustomization

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dragonfly-cache-peer4-service
+  annotations:
+    kubernetes.io/elb.id: 949775f9-de88-448d-af8e-c0cd8432ae36
+spec:
+  ports:
+    - name: proxy-service
+      port: 65001
+      protocol: TCP
+      targetPort: 65001
+  selector:
+    component: dragonfly-cache
+    instance: dragonfly-cache-peer4
+  type: LoadBalancer

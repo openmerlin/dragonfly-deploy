@@ -1,0 +1,192 @@
+# server scheduler instance configuration
+server:
+  # # Advertise ip.
+   # NOTE(tommylikehu): 宿主机docker0对应的IP地址，到时候sheduler会绑定宿主机的端口，因此也可以通过外部IP访问scheduler
+  advertiseIP: 172.21.0.65
+  # # Listen ip.
+  # listenIP: 0.0.0.0
+  # Port is the ip and port scheduler server listens on.
+  # NOTE(tommylikehu): Scheduler的RPC的地址，用于与seed peer/peer交互，内部用
+  port: 8002
+  # # Server host.
+  # host: localhost
+  # WorkHome is working directory.
+  # In linux, default value is /usr/local/dragonfly.
+  # In macos(just for testing), default value is /Users/$USER/.dragonfly.
+  # NOTE(tommylikehu): Manager对应的磁盘操作根目录，默认放在挂载的磁盘中,假定挂载Disk在/data1目录, 所有的子目录均挂载在这个目录下。
+  workHome: '/data1/scheduler/dragonfly/home'
+  # logDir is the log directory.
+  # In linux, default value is /var/log/dragonfly.
+  # In macos(just for testing), default value is /Users/$USER/.dragonfly/logs.
+  logDir: '/data1/scheduler/dragonfly/logs'
+  # cacheDir is dynconfig cache directory.
+  # In linux, default value is /var/cache/dragonfly.
+  # In macos(just for testing), default value is /Users/$USER/.dragonfly/cache.
+  cacheDir: '/data1/scheduler/dragonfly/cache'
+  # pluginDir is the plugin directory.
+  # In linux, default value is /usr/local/dragonfly/plugins.
+  # In macos(just for testing), default value is /Users/$USER/.dragonfly/plugins.
+  pluginDir: '/data1/scheduler/dragonfly/plugins'
+  # dataDir is the directory.
+  # In linux, default value is /var/lib/dragonfly.
+  # In macos(just for testing), default value is /Users/$USER/.dragonfly/data.
+  dataDir: '/data1/scheduler/dragonfly/data'
+
+# scheduler policy configuration
+# NOTE(tommylikehu): Scheduler对应的调度插件，优先考虑默认。
+scheduler:
+  # Algorithm configuration to use different scheduling algorithms,
+  # default configuration supports "default" and "ml"
+  # "default" is the rule-based scheduling algorithm,
+  # "ml" is the machine learning scheduling algorithm
+  # It also supports user plugin extension, the algorithm value is "plugin",
+  # and the compiled `d7y-scheduler-plugin-evaluator.so` file is added to
+  # the dragonfly working directory plugins.
+  algorithm: default
+  # backSourceCount is the number of backsource clients
+  # when the seed peer is unavailable.
+  backSourceCount: 3
+  # Retry scheduling back-to-source limit times.
+  retryBackSourceLimit: 5
+  # Retry scheduling limit times.
+  retryLimit: 10
+  # Retry scheduling interval.
+  retryInterval: 50ms
+  # GC metadata configuration.
+  gc:
+    # pieceDownloadTimeout is the timeout of downloading piece.
+    pieceDownloadTimeout: 30m
+    # peerGCInterval is the interval of peer gc.
+    peerGCInterval: 10s
+    # peerTTL is the ttl of peer. If the peer has been downloaded by other peers,
+    # then PeerTTL will be reset
+    peerTTL: 24h
+    # taskGCInterval is the interval of task gc. If all the peers have been reclaimed in the task,
+    # then the task will also be reclaimed.
+    taskGCInterval: 30m
+    # hostGCInterval is the interval of host gc.
+    hostGCInterval: 6h
+    # hostTTL is time to live of host. If host announces message to scheduler,
+    # then HostTTl will be reset.
+    hostTTL: 1h
+
+# Database info used for server.
+database:
+  # Redis configuration.
+  redis:
+    # Redis addresses.
+    addrs:
+      - "172.21.0.115:6379"
+    # Redis password.
+    password: REDIS_PASSWORD
+    # Redis brokerDB name.
+    brokerDB: 1
+    # Redis backendDB name.
+    backendDB: 2
+
+# Dynamic data configuration.
+# NOTE(tommylikehu): Scheduler从manager获取动态配置的间隔。
+dynConfig:
+  # Dynamic config refresh interval.
+  refreshInterval: 1m
+
+# Scheduler host configuration.
+# NOTE(tommylikehu): 用来调度用的，因此可以根据事情情况填写，
+host:
+  # idc is the idc of scheduler instance.
+  idc: 'huawei-guiyang'
+  # location is the location of scheduler instance.
+  location: 'china-guizhou'
+  hostname: "172-21-0-65-scheduler"
+
+# Manager configuration.
+manager:
+  # addr is manager access address.
+  # NOTE(tommylikehu): 要配置成manager前端elb的域名信息，
+  addr: "172.21.0.134:65003"
+  # schedulerClusterID cluster id to which scheduler instance belongs.
+  # NOTE(tommylikehu): 所有的scheduler实例默认使用一个ID，
+  schedulerClusterID: "1"
+  # keepAlive keep alive configuration.
+  keepAlive:
+    # KeepAlive interval.
+    interval: 5s
+
+# Seed peer configuration.
+# NOTE(tommylikehu): 不太清楚，先保持默认
+seedPeer:
+  # Scheduler enable seed peer as P2P peer,
+  # if the value is false, P2P network will not be back-to-source through
+  # seed peer but by peer and preheat feature does not work.
+  enable: true
+
+# Machinery async job configuration,
+# see https://github.com/RichardKnop/machinery.
+# NOTE(tommylikehu): 这个跟job相关的，先改多点。
+job:
+  # Scheduler enable job service.
+  enable: true
+  # Number of workers in global queue.
+  globalWorkerNum: 5
+  # Number of workers in scheduler queue.
+  schedulerWorkerNum: 5
+  # Number of workers in local queue.
+  localWorkerNum: 5
+
+# Store task download information.
+# NOTE(tommylikehu): 优先默认。
+storage:
+  # maxSize sets the maximum size in megabytes of storage file.
+  maxSize: 100
+  # maxBackups sets the maximum number of storage files to retain.
+  maxBackups: 10
+  # bufferSize sets the size of buffer container,
+  # if the buffer is full, write all the records in the buffer to the file.
+  bufferSize: 100
+
+# Enable prometheus metrics.
+# NOTE(tommylikehu): 优先默认。
+metrics:
+  # Scheduler enable metrics service.
+  enable: false
+  # Metrics service address.
+  addr: ':8000'
+  # Enable host metrics.
+  enableHost: false
+
+security:
+  # autoIssueCert indicates to issue client certificates for all grpc call.
+  # If AutoIssueCert is false, any other option in Security will be ignored.
+  autoIssueCert: false
+  # caCert is the root CA certificate for all grpc tls handshake, it can be path or PEM format string.
+  caCert: ''
+  # tlsVerify indicates to verify certificates.
+  tlsVerify: false
+  # tlsPolicy controls the grpc shandshake behaviors:
+  #   force: both ClientHandshake and ServerHandshake are only support tls
+  #   prefer: ServerHandshake supports tls and insecure (non-tls), ClientHandshake will only support tls
+  #   default: ServerHandshake supports tls and insecure (non-tls), ClientHandshake will only support insecure (non-tls)
+  # Notice: If the dragonfly service has been deployed, a two-step upgrade is required.
+  # The first step is to set tlsPolicy to default, and then upgrade the dragonfly services.
+  # The second step is to set tlsPolicy to prefer, and then completely upgrade the dragonfly services.
+  tlsPolicy: 'prefer'
+  certSpec:
+    # validityPeriod is the validity period  of certificate.
+    validityPeriod: 4320h
+
+network:
+  # Enable ipv6.
+  enableIPv6: false
+
+# console shows log on console
+console: false
+
+# whether to enable debug level logger and enable pprof
+verbose: true
+
+# listen port for pprof, only valid when the verbose option is true
+# default is -1. If it is 0, pprof will use a random port.
+pprof-port: -1
+
+# jaeger endpoint url, like: http://jaeger.dragonfly.svc:14268/api/traces
+jaeger: ""
