@@ -308,10 +308,10 @@ data:
 
       hijackHTTPS:
         # key pair used to hijack https requests
-        cert: ""
-        key: ""
+        cert: "/etc/peer/keys/tls.crt"
+        key: "/etc/peer/keys/tls.key"
         hosts:
-          - regx: mirror.aliyuncs.com:443 # regexp to match request hosts
+          - regx: foundation-model-china2.test.osinfra.cn # regexp to match request hosts
             # whether to ignore https certificate errors
             insecure: true
             # optional certificates if the host uses self-signed certificates

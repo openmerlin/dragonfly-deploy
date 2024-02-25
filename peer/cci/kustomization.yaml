@@ -5,6 +5,7 @@ resources:
 - deployment-4
 - deployment-5
 - service.yaml
+- secret.yaml
 - config.yaml
 commonLabels:
   owner: tommylike

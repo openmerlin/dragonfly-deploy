@@ -63,6 +63,12 @@ spec:
           volumeMounts:
             - mountPath: /data2/peer
               name: database-volume
+            - mountPath: /etc/peer/keys/tls.key
+              name: tls-volume
+              subPath: tls.key
+            - mountPath: /etc/peer/keys/tls.crt
+              name: tls-volume
+              subPath: tls.crt
           livenessProbe:
             exec:
               command:
@@ -80,6 +86,9 @@ spec:
             periodSeconds: 5
             failureThreshold: 3
       volumes:
+        - name: tls-volume
+          secret:
+            secretName: cache-server-secret
         - name: config-volume
           configMap:
             name: dragonfly-config

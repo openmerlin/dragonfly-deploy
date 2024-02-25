@@ -1,6 +1,7 @@
 resources:
 - deployment.yaml
-- pvc.yaml
+# use pre created persistent volume
+#- pvc.yaml
 - service.yaml
 commonLabels:
   owner: tommylike
