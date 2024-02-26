@@ -1,0 +1,12 @@
+resources:
+- daemonset.yaml
+- service.yaml
+#- secret.yaml
+- config.yaml
+commonLabels:
+  owner: tommylike
+commonAnnotations:
+  email: tommylikehu@gmail.com
+namespace: dragonfly-cache
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
