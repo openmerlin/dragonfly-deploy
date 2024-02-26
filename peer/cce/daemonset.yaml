@@ -38,15 +38,15 @@ spec:
           imagePullPolicy: Always
           name: dragonfly-cache-server
           command:
-            ##- /opt/dragonfly/bin/dfget
-            #- daemon
-            #- --config
-            #- /data2/peer/peer.yaml
+            - /opt/dragonfly/bin/dfget
+            - daemon
+            - --config
+            - /data2/peer/peer.yaml
             # used for debug
-            - /bin/sh
-            - -c
-            - |
-              sleep 10000
+            # - /bin/sh
+            # - -c
+            # - |
+            #   sleep 10000
           resources:
             requests:
               cpu: 2000m
