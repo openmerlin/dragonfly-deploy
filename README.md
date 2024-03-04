@@ -18,6 +18,12 @@ ip address: 172.21.0.65
 /data1: 100G 普通SSD
 /data2: 10T 高速SSD，用于缓存Pieces
 
+2. node3
+spec: 8u16g
+ip address: 172.21.0.165
+/data1: 100G 普通SSD
+/data2: 10T 高速SSD，用于缓存Pieces
+
 3. 2个节点的日志均通过挂载本地磁盘记录到了同样的位置，确保每次启动日志一致
 scheduler和manager
 /data1

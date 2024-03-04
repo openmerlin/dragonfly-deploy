@@ -1,0 +1,178 @@
+# current server info used for server
+server:
+  # GRPC server configure.
+  grpc:
+    # # Advertise ip.
+    # NOTE(tommylikehu): 宿主机docker0对应的IP地址，到时候manager会绑定宿主机的端口，我们这里绑定了ELB，填写ELB的地址，因此也可以通过外部IP访问manager
+    advertiseIP: 172.21.0.134 #ELB Addreess
+    # # Listen ip.
+    # listenIP: 0.0.0.0
+    # Listen port.
+    # when this port is not available, manager will try next port.
+    # NOTE(tommylikehu): ManagergRPC的地址，用于scheduler/seed peer等上报注册，内部用, 
+    port:
+      start: 65003
+      end: 65003
+  # REST server configure
+  rest:
+    # REST server address
+    # NOTE(tommylikehu): 对应的管理界面的地址，我们需要在在前端部署ELB用于负载均衡
+    addr: :8080
+  # WorkHome is working directory.
+  # In linux, default value is /usr/local/dragonfly.
+  # In macos(just for testing), default value is /Users/$USER/.dragonfly.
+  # NOTE(tommylikehu): Manager对应的磁盘操作根目录，默认放在挂载的磁盘中,假定挂载Disk在/data1目录, 我们创建manager对应的目录，所有的子目录均挂载在这个目录下。
+  workHome: '/data1/manager/dragonfly/home'
+  # logDir is the log directory.
+  # In linux, default value is /var/log/dragonfly.
+  # In macos(just for testing), default value is /Users/$USER/.dragonfly/logs.
+  logDir: '/data1/manager/dragonfly/logs'
+  # cacheDir is dynconfig cache directory.
+  # In linux, default value is /var/cache/dragonfly.
+  # In macos(just for testing), default value is /Users/$USER/.dragonfly/cache.
+  cacheDir: '/data1/manager/dragonfly/cache'
+  # pluginDir is the plugin directory.
+  # In linux, default value is /usr/local/dragonfly/plugins.
+  # In macos(just for testing), default value is /Users/$USER/.dragonfly/plugins.
+  pluginDir: '/data1/manager/dragonfly/plugin'
+
+# NOTE(tommylikehu): 用来做前后端认证的，因为我们的console不对外，这块先不管
+auth:
+  jwt:
+    # Realm name to display to the user, default value is Dragonfly.
+    realm: "Dragonfly"
+    # Key is secret key used for signing, default value is
+    # encoded base64 of dragonfly.
+    # Please change the key in production.
+    key: "JWT_TOKEN"
+    # Timeout is duration that a jwt token is valid,
+    # default duration is two days.
+    timeout: 48h
+    # MaxRefresh field allows clients to refresh their token
+    # until MaxRefresh has passed, default duration is two days.
+    maxRefresh: 48h
+
+# Database info used for server.
+# NOTE(tommylikehu): 后续需要换成华为云服务的mysql实例，更改对应的用户名密码，tls建议默认开启。
+database:
+  # Database type, supported types include mysql, mariadb and postgres.
+  type: mysql
+  # Mysql configure.
+  mysql:
+    user: dragonfly
+    password: MYSQL_PASSWORD
+    host: 172.21.0.180
+    port: 3306
+    dbname: manager
+    migrate: true
+  # tlsConfig: preferred
+  # tls:
+  #   # Client certificate file path.
+  #   cert: /etc/ssl/certs/cert.pem
+  #   # Client key file path.
+  #   key: /etc/ssl/private/key.pem
+  #   # CA file path.
+  #   ca: /etc/ssl/certs/ca.pem
+  #   # Whether a client verifies the server's certificate chain and host name.
+  #   insecureSkipVerify: true
+
+  # Redis configure.
+  # NOTE(tommylikehu): 后续需要换成华为云服务的redis实例，需要配置三个数据库DB
+  redis:
+    # Redis addresses.
+    addrs:
+      - "172.21.0.115:6379"
+    # Redis password.
+    password: REDIS_PASSWORD
+    # Redis DB name.
+    db: 0
+    # Redis brokerDB name.
+    brokerDB: 1
+    # Redis backendDB name.
+    backendDB: 2
+
+# Manager server cache.
+# NOTE(tommylikehu): cache相关的配置，优先考虑默认。
+cache:
+  # Redis cache configure.
+  redis:
+    # Cache ttl configure.
+    ttl: 30s
+  # Local cache configure.
+  local:
+    # LFU cache size.
+    size: 10000
+    # Cache ttl configure.
+    ttl: 10s
+
+# Object storage service.
+# NOTE(tommylikehu): obs相关配置，我们的场景用不上，关闭。
+objectStorage:
+  # Enable object storage.
+  enable: false
+  # Object storage name of type, it can be s3 or oss.
+  name: s3
+  # Storage region.
+  region: ''
+  # Datacenter endpoint.
+  endpoint: ''
+  # Access key id.
+  accessKey: ''
+  # Access key secret.
+  secretKey: ''
+
+# Prometheus metrics.
+# NOTE(tommylikehu): 监控相关的配置，默认关闭。
+metrics:
+  # Manager enable metrics service.
+  enable: false
+  # Metrics service address.
+  addr: ':8000'
+  # Enable peer gauge metrics.
+  enablePeerGauge: true
+
+# NOTE(tommylikehu): 支持服务端自动分发证书到客户端，前期先关闭。
+security:
+  # autoIssueCert indicates to issue client certificates for all grpc call.
+  # If AutoIssueCert is false, any other option in Security will be ignored.
+  autoIssueCert: false
+  # caCert is the CA certificate for all grpc tls handshake, it can be path or PEM format string.
+  caCert: ''
+  # caKey is the CA private key, it can be path or PEM format string.
+  caKey: ''
+  # tlsPolicy controls the grpc shandshake behaviors:
+  #   force: both ClientHandshake and ServerHandshake are only support tls
+  #   prefer: ServerHandshake supports tls and insecure (non-tls), ClientHandshake will only support tls
+  #   default: ServerHandshake supports tls and insecure (non-tls), ClientHandshake will only support insecure (non-tls)
+  # Notice: If the drgaonfly service has been deployed, a two-step upgrade is required.
+  # The first step is to set tlsPolicy to default, and then upgrade the dragonfly services.
+  # The second step is to set tlsPolicy to prefer, and then completely upgrade the dragonfly services.
+  tlsPolicy: 'prefer'
+  certSpec:
+    # dnsNames is a list of dns names be set on the certificate.
+    dnsNames:
+      - 'dragonfly-manager'
+      - 'dragonfly-manager.dragonfly-system.svc'
+      - 'dragonfly-manager.dragonfly-system.svc.cluster.local'
+    # ipAddresses is a list of ip addresses be set on the certificate.
+    ipAddresses:
+    # validityPeriod is the validity period  of certificate.
+    validityPeriod: 87600h
+
+# NOTE(tommylikehu): IPv6默认关闭。
+network:
+  # Enable ipv6.
+  enableIPv6: false
+
+# console shows log on console
+console: false
+
+# whether to enable debug level logger and enable pprof
+verbose: true
+
+# listen port for pprof, only valid when the verbose option is true
+# default is -1. If it is 0, pprof will use a random port.
+pprof-port: -1
+
+# jaeger endpoint url, like: http://jaeger.dragonfly.svc:14268/api/traces
+jaeger: ""
