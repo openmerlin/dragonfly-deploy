@@ -93,7 +93,7 @@ host:
   # IDC deployed by daemon.
   idc: 'china-guizhou'
   # Daemon hostname.
-  hostname: "172-21-0-65-seed-peer"
+  hostname: "172-21-0-165-seed-peer"
 
 # Download service option.
 # NOTE(tommylikehu): 保持默认, 下载端口65006
