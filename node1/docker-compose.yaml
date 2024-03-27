@@ -46,6 +46,8 @@ services:
         source: /data1/manager
         target: /data1/manager
       - ./manager.yaml:/etc/dragonfly/manager.yaml:ro
+      - /etc/peer/keys/tls.crt:/etc/peer/keys/tls.crt:ro
+      - /etc/peer/keys/tls.key:/etc/peer/keys/tls.key:ro
     healthcheck:
       test: ["CMD-SHELL", "/bin/grpc_health_probe -addr=:65003 || exit 1"]
       interval: 1s
