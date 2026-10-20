@@ -119,26 +119,3 @@ networks:
 ## 其他注意事项
 1. dragonfly集群的redis和mysql配置密码需要在同步前修改
 2. cce/cci集群中的使用的反向代理证书，需要通过修改secret.yaml中的tls.crt和tls.key配置
-# TODO
-1. lfs regex优化，避免不必要的文件缓存(done)
-2. kubernetes部署
-3. docker compose重启自动加载(done)
-4. node节点补充监控告警(todo)
-5. peer节点部署deployment用于在CCI中部署多节点，用于集群加速(done)
-6. peer节点部署daemonset用于在CCE或者自建集群中，用于集群加速(done)
-7. 数据库连接加密(doing)
-8. dragonfly的配置优化(todo)
-9. 支持repository任务预热(doing)
-10.对接预热任务(todo)
-11. CCI&CCE集群环境不同，因为Peer与Peer之间还需要互相访问，如果需要打通，需要(done)
-    1. CCI里面使用ELB+Service+Port IP的方式建立VPC连接, 内部访问用loadbalancer服务，外部，因为peer绑定了elb，同样可以访问(done)
-    2. CCE里面使用NodePort的方式建立VPC连接
-12. CCI集群scheduler hostname不支持设置，每次重启生成新的hostname(todo)
-13. modelfoundry_hub支持proxy，整体逻辑是参考git proxy的逻辑，通过环境变量，支持将lfs的请求指向proxy代理(done)
-14. 基于hijackHTTPS配置https的支持(done)
-```
-git config  http.proxy http://127.0.0.1:65001
-git config --global url.http://foundation-model-china2.test.osinfra.cn/.insteadOf https://foundation-model-china2.test.osinfra.cn/
-git config --global lfs.transfer.enablehrefrewrite true
-```
-    1. 需要支持设置全局代理 http.proxy与https.proxy配置
